@@ -1,5 +1,7 @@
 var state = {
-	token: ""
+	token: "",
+	identity: null,
+	opportunities: null
 }
 
 forge.tabbar.addButton({
