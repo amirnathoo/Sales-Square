@@ -1,5 +1,6 @@
 var map = {
 	init: false,
+	checkins: null,
 
 	loadMap: function() {
 		forge.logging.log('Loading map');
@@ -7,21 +8,28 @@ var map = {
 		script.type = "text/javascript";
 		script.src = "http://maps.googleapis.com/maps/api/js?key=AIzaSyAlFSCee70OJOiD7k-fz8e6ywXVVIkWErU&gt&sensor=true&callback=map.mapReady";
 		document.body.appendChild(script);
+		
+		forge.prefs.get('checkins', function(checkins) {
+			map.checkins = JSON.parse(checkins) || {};
+		})
 	},
 
 	mapReady: function() {
 		forge.logging.log('Map loaded');
-		map.gmap1Ready = true;
+		map.init = true;
 		map.initMap();
 	},
 
 	initMap: function() {
 		forge.geolocation.getCurrentPosition(function(position) {
-			forge.logging.log('Location set');
+			forge.logging.log('Position set');
+			state.position = position;
+			
+			map.getLocation(position.coords);
 		
 			var latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude, true);
 			var myOptions = {
-				zoom: 15,
+				zoom: 12,
 				center: latLng,
 				mapTypeId: google.maps.MapTypeId.ROADMAP
 			}
@@ -45,12 +53,17 @@ var map = {
 					zIndex: -1
 				});
 			});
+			
+			for (ci in map.checkins) {
+				map.addCheckin(map.checkins[ci].opp, map.checkins[ci].position, map.checkins[ci].name);
+			}
 		});
 	},
 
 	refreshMap: function() {
 		forge.geolocation.getCurrentPosition(function(position) {
-			forge.logging.log('Location set');
+			forge.logging.log('Position set');
+			state.position = position;
 		
 			var latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude, true);
 		
@@ -61,6 +74,68 @@ var map = {
 			map.marker.setPosition(latLng);
 			map.marker2.setPosition(latLng);
 		});
+	},
+	
+	getLocation: function(coords) {
+		forge.request.ajax({
+			url: "http://maps.googleapis.com/maps/api/geocode/json?latlng="+coords.latitude+","+coords.longitude+"&sensor=true",
+			dataType: "json",
+			success: function(response) {
+				state.location = response.results[0].formatted_address;
+				forge.logging.log('Location set: '+state.location);
+			},
+			error: function(response) {
+				forge.logging.log('ERROR getting location, response:');
+				forge.logging.log(response);
+			}
+		});
+	},
+	
+	addCheckin: function(opp, position, name) {
+		forge.logging.log('Adding checkin to map');
+		forge.logging.log('Opportunity: '+opp);
+		forge.logging.log('Position: '+position);
+		forge.logging.log('Name: '+name);
+		
+		var latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude, true);
+
+		if (map.checkins[name] && map.checkins[name].marker) {
+			map.checkins[name].marker.setPosition(latLng);
+		} else {
+			map.checkins[name] = {};	
+			map.checkins[name].marker = new google.maps.Marker({
+				position: latLng,
+				title: name,
+				map: map.gmap2
+			});
+
+			google.maps.event.addListener(map.checkins[name].marker, 'click', function() {
+				if (map.checkins[name].infowindowopen) {
+					map.checkins[name].infowindow.close();
+				} else {
+					map.checkins[name].infowindow.open(map.gmap2, map.checkins[name].marker);
+				}
+				map.checkins[name].infowindowopen = !map.checkins[name].infowindowopen;
+			});
+		}
+		
+		map.checkins[name].content = name + " is working on "+opp;
+		map.checkins[name].infowindow = new google.maps.InfoWindow({
+			content: map.checkins[name].content
+		});
+		map.checkins[name].opp = opp;
+		map.checkins[name].position = position;
+		map.checkins[name].name = name;
+		
+		var obj = {};
+		for (var ci in map.checkins) {
+			obj[ci] = {};
+			obj[ci].name = map.checkins[ci].name;
+			obj[ci].opp = map.checkins[ci].opp;
+			obj[ci].position = map.checkins[ci].position;
+		}
+		
+		forge.prefs.set('checkins', JSON.stringify(obj));
 	}
 }
 

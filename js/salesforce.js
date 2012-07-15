@@ -1,9 +1,6 @@
 //TODO Implement refresh token otherwise this will stop working a while after initial oauth
-forge.enableDebug();
-
 var salesforce = {
 	consumer_key: "3MVG9y6x0357HledXTja.viKSYW0gEMrDKbD6pf.AoDYMgQdxNAUAMdC6ra2TdamileUqZWSodRyqTdgJIAZH",
-	consumer_secret: "1325734187136715755",
 	
 	login: function() {
 		forge.tabs.openWithOptions({
@@ -12,7 +9,7 @@ var salesforce = {
 			title: "Salesforce Login"	
 		}, function(data) {
 			state.token = decodeURIComponent(data.url.split('#access_token=')[1].split('&')[0]);
-			//forge.prefs.set('token', state.token); TODO: implement refresh token functionlity, for now need to login each time
+			forge.prefs.set('token', state.token); 
 			salesforce.getIdentity(decodeURIComponent(data.url.split('&id=')[1].split('&')[0]));
 		});
 	},
@@ -34,7 +31,7 @@ var salesforce = {
 					data = JSON.parse(data);
 				}
 				state.identity = data;
-				//forge.prefs.set('token', JSON.stringify(state.identity)); TODO: implement refresh token functionlity, for now need to login each time
+				forge.prefs.set('identity', JSON.stringify(state.identity)); 
 				salesforce.getOpportunities();
 			},
 			error: function(data) {
@@ -62,6 +59,27 @@ var salesforce = {
 			},
 			error: function(data) {
 				forge.logging.log('Error getting opportunities');
+				forge.logging.log(data);
+			}
+		});
+	},
+	
+	post: function(msg) {
+		forge.request.ajax({
+			url : state.identity.urls.feeds.replace("{version}", "25.0") + "/news/"+state.identity.user_id+"/feed-items",
+			type: "POST",
+			headers : {
+				'Authorization' : 'OAuth ' + state.token
+			},
+			data: {
+				"type": "Text",
+				"text": msg
+			},
+			success : function(response) {
+				forge.logging.log('Success posting: '+msg)
+			},
+			error: function(data) {
+				forge.logging.log('ERROR posting');
 				forge.logging.log(data);
 			}
 		});
