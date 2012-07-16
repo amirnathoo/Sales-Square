@@ -1,23 +1,33 @@
 {
-	"config_version": "2",
-	"name": "Sales Square",
-	"author": "nathooamir@gmail.com",
-	"version": "0.1",
-	"platform_version": "v1.3",
-	"description": "Sales Square",
+	"author": "nathooamir@gmail.com", 
+	"config_version": "2", 
+	"description": "Sales Square", 
 	"modules": {
+		"file": true, 
+		"geolocation": true, 
+		"is": true, 
 		"logging": {
 			"level": "DEBUG"
-		},
-		"is": true,
-		"prefs": true,
+		}, 
+		"prefs": true, 
 		"request": {
-			"permissions": ["http://*/*", "https://*/*"]
-		},
-		"tools": true,
+			"permissions": [
+				"http://*/*", 
+				"https://*/*"
+			]
+		}, 
+		"tabbar": true, 
+		"tools": true, 
 		"topbar": true,
-		"tabbar": true,
-		"geolocation": true,
-		"file": true
-	}
+		"icons": {
+			"ios": {
+				"57": "img/57.png",
+				"72": "img/72.png",
+				"114": "img/114.png"
+			}
+		}
+	}, 
+	"name": "Sales Square", 
+	"platform_version": "v1.3", 
+	"version": "0.1"
 }

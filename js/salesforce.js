@@ -6,7 +6,9 @@ var salesforce = {
 		forge.tabs.openWithOptions({
 			url: "https://login.salesforce.com/services/oauth2/authorize?client_id=" + salesforce.consumer_key + "&display=touch&response_type=token&redirect_uri="+encodeURIComponent("https://login.salesforce.com/services/oauth2/success"),
 			pattern: "https://login.salesforce.com/services/oauth2/succ*",
-			title: "Salesforce Login"	
+			title: "Salesforce Login",
+			tint: [10,49,115,255],
+			buttonTint: [10,49,115,255]
 		}, function(data) {
 			state.token = decodeURIComponent(data.url.split('#access_token=')[1].split('&')[0]);
 			forge.prefs.set('token', state.token); 
@@ -72,16 +74,12 @@ var salesforce = {
 			url : state.identity.urls.feeds.replace("{version}", "25.0") + "/news/"+state.identity.user_id+"/feed-items",
 			type: "POST",
 			headers : {
-				'Authorization' : 'OAuth ' + state.token,
-				'Content-Disposition': 'form-data; name="feedItemFileUpload"; filename="check-in-photo.jpg"',
-				'Content-Type': 'application/octet-stream',
-				'Content-Transfer-Encoding': 'binary'
+				'Authorization' : 'OAuth ' + state.token
 			},
 			data: {
 				"type": "Text",
 				"text": msg
 			},
-			files: [file],
 			success : function(response) {
 				forge.logging.log('Success posting: '+msg)
 			},

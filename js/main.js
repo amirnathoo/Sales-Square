@@ -7,6 +7,10 @@ var state = {
 	mapButton: null
 }
 
+$.fx.off = true;
+forge.topbar.setTint([10,49,115,255]);
+forge.tabbar.setActiveTint([10,49,115,255]);
+
 forge.tabbar.addButton({
 	icon: "img/tick.png",
 	text: "Check In",
@@ -45,7 +49,7 @@ $('ul li a').live('tap', function() {
 	var opp = $(this).html();
 	forge.file.getImage(function(file) {
 		salesforce.post(state.identity.display_name + " is at " + state.location + " working on " + opp, file);
-		map.addCheckin($(this).html(), state.position, state.identity.display_name);
+		map.addCheckin(opp, state.position, state.identity.display_name);
 		location.hash = "#two";
 		state.mapButton.setActive()
 	});
@@ -95,6 +99,7 @@ $(document).bind('pagechange', function() {
 		$('ul').listview('refresh');
 	}
 });
+
 
 
 
