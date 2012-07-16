@@ -60,21 +60,28 @@ var salesforce = {
 			error: function(data) {
 				forge.logging.log('Error getting opportunities');
 				forge.logging.log(data);
+				forge.prefs.set('token', '');
+				delete state.token;
+				delete state.identity;
 			}
 		});
 	},
 	
-	post: function(msg) {
+	post: function(msg, file) {
 		forge.request.ajax({
 			url : state.identity.urls.feeds.replace("{version}", "25.0") + "/news/"+state.identity.user_id+"/feed-items",
 			type: "POST",
 			headers : {
-				'Authorization' : 'OAuth ' + state.token
+				'Authorization' : 'OAuth ' + state.token,
+				'Content-Disposition': 'form-data; name="feedItemFileUpload"; filename="check-in-photo.jpg"',
+				'Content-Type': 'application/octet-stream',
+				'Content-Transfer-Encoding': 'binary'
 			},
 			data: {
 				"type": "Text",
 				"text": msg
 			},
+			files: [file],
 			success : function(response) {
 				forge.logging.log('Success posting: '+msg)
 			},

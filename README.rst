@@ -34,3 +34,9 @@ Running the app
 1. In the Toolkit, click on the app name to build it. The first time this will take a minute or so, subsequent incremental builds will be very fast.
 
 2. Then click 'iOS' in the Run section of the app page. You'll see the full console output there and the iPhone emulator will start up in a few seconds.
+
+Testing the app
+---------------
+
+The app includes photo-taking functionality so to test that in the emulator, you need to have photos pre-loaded. Instructions on how to set that up are here:
+http://stackoverflow.com/questions/468879/adding-images-to-iphone-simulator

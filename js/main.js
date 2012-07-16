@@ -3,7 +3,8 @@ var state = {
 	identity: null,
 	opportunities: null,
 	position: null,
-	location: ""
+	location: "",
+	mapButton: null
 }
 
 forge.tabbar.addButton({
@@ -23,6 +24,7 @@ forge.tabbar.addButton({
 	text: "Map",
 	index: 1
 }, function(button) {
+	state.mapButton = button;
 	button.onPressed.addListener(function () {
 		location.hash = "#two";
 		forge.topbar.setTitle("Team Check Ins");
@@ -40,9 +42,13 @@ $('#checkin').live('tap', function() {
 });
 
 $('ul li a').live('tap', function() {
-	salesforce.post(state.identity.display_name + " is at " + state.location + " working on " + $(this).html());
-	map.addCheckin($(this).html(), state.position, state.identity.display_name);
-	location.hash = "#two";
+	var opp = $(this).html();
+	forge.file.getImage(function(file) {
+		salesforce.post(state.identity.display_name + " is at " + state.location + " working on " + opp, file);
+		map.addCheckin($(this).html(), state.position, state.identity.display_name);
+		location.hash = "#two";
+		state.mapButton.setActive()
+	});
 });
 
 $(document).bind('pagechange', function() {

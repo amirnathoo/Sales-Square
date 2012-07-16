@@ -17,6 +17,7 @@
 		"tools": true,
 		"topbar": true,
 		"tabbar": true,
-		"geolocation": true
+		"geolocation": true,
+		"file": true
 	}
 }
