@@ -55,7 +55,7 @@ var map = {
 			});
 			
 			for (ci in map.checkins) {
-				map.addCheckin(map.checkins[ci].opp, map.checkins[ci].position, map.checkins[ci].name);
+				map.addCheckin(map.checkins[ci].opp, map.checkins[ci].lat, map.checkins[ci].lng, map.checkins[ci].name);
 			}
 		});
 	},
@@ -76,13 +76,17 @@ var map = {
 		});
 	},
 	
-	getLocation: function(coords) {
+	getLocation: function(coords, cb) {
 		forge.request.ajax({
 			url: "http://maps.googleapis.com/maps/api/geocode/json?latlng="+coords.latitude+","+coords.longitude+"&sensor=true",
 			dataType: "json",
 			success: function(response) {
-				state.location = response.results[0].formatted_address;
-				forge.logging.log('Location set: '+state.location);
+				if (cb) {
+					cb(response.results[0].formatted_address);
+				} else {
+					state.location = response.results[0].formatted_address;
+					forge.logging.log('Location set: '+state.location);
+				}
 			},
 			error: function(response) {
 				forge.logging.log('ERROR getting location, response:');
@@ -91,13 +95,10 @@ var map = {
 		});
 	},
 	
-	addCheckin: function(opp, position, name) {
+	addCheckin: function(opp, lat, lng, name) {
 		forge.logging.log('Adding checkin to map');
-		forge.logging.log('Opportunity: '+opp);
-		forge.logging.log('Position: '+position);
-		forge.logging.log('Name: '+name);
 		
-		var latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude, true);
+		var latLng = new google.maps.LatLng(lat, lng, true);
 
 		if (map.checkins[name] && map.checkins[name].marker) {
 			map.checkins[name].marker.setPosition(latLng);
@@ -124,7 +125,8 @@ var map = {
 			content: map.checkins[name].content
 		});
 		map.checkins[name].opp = opp;
-		map.checkins[name].position = position;
+		map.checkins[name].lat = lat;
+		map.checkins[name].lng = lng;
 		map.checkins[name].name = name;
 		
 		var obj = {};
@@ -132,7 +134,8 @@ var map = {
 			obj[ci] = {};
 			obj[ci].name = map.checkins[ci].name;
 			obj[ci].opp = map.checkins[ci].opp;
-			obj[ci].position = map.checkins[ci].position;
+			obj[ci].lat = map.checkins[ci].lat;
+			obj[ci].lng = map.checkins[ci].lng;
 		}
 		
 		forge.prefs.set('checkins', JSON.stringify(obj));

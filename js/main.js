@@ -49,7 +49,34 @@ $('ul li a').live('tap', function() {
 	var opp = $(this).html();
 	forge.file.getImage(function(file) {
 		salesforce.post(state.identity.display_name + " is at " + state.location + " working on " + opp, file);
-		map.addCheckin(opp, state.position, state.identity.display_name);
+		map.addCheckin(opp, state.position.coords.latitude, state.position.coords.longitude, state.identity.display_name);
+		forge.logging.log('Creating push notification');
+		forge.request.ajax({
+			url: "https://api.parse.com/1/push",
+			type: "POST",
+			headers: {
+				"X-Parse-Application-Id": "iMgpKcdRI0ZhgF6WFv0CAecOPVViY3AoZxoBO8Fu",
+				"X-Parse-REST-API-Key": "RQXuUnxt94JwIUeV9VX4tbCE5o8gaMnE6nPRvlnT"
+			},
+			contentType: "application/json",
+			dataType: 'json',
+			data: JSON.stringify({
+				channel: "Broadcast",
+				data: {
+					opp: opp,
+					lat: state.position.coords.latitude,
+					lng: state.position.coords.longitude,
+					name: state.identity.display_name
+				}
+			}),
+			success: function() {
+				forge.logging.log('Successfully created notification!');
+			}, 
+			error: function(err) {
+				forge.logging.log('Error creating notification:');
+				forge.logging.log(err);
+			}
+		});
 		location.hash = "#two";
 		state.mapButton.setActive()
 	});
@@ -98,6 +125,24 @@ $(document).bind('pagechange', function() {
 		
 		$('ul').listview('refresh');
 	}
+});
+
+forge.event.messagePushed.addListener(function (msg) {
+    forge.logging.log("Received push message:");
+	forge.logging.log(msg);
+	map.addCheckin(msg.opp, msg.lat, msg.lng, msg.name); 
+	map.getLocation({
+		longitude: msg.lng,
+		latitude: msg.lat
+	}, function(addr) {
+		forge.notification.create("Sales Square: new check in", msg.name+" is working on "+msg.opp+" at "+addr);
+	});
+});
+
+forge.partners.parse.push.subscribe('Broadcast', function() {
+	forge.logging.log('Successfully subscribed for push notifications');
+}, function(err) {
+	forge.logging.error("Couldn't subscribe for push notifications: "+JSON.stringify(err));
 });
 
 
