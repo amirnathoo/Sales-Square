@@ -19,7 +19,7 @@ Getting the code
 2. Copy your identity.json file away and remove the template contents in the src directory:
 
    * cd src
-   * mv identity.json ...
+   * mv identity.json ..
    * rm -rf *
 
 3. Checkout this repository and copy the identity.json file back:
