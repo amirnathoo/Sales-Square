@@ -35,6 +35,7 @@ var salesforce = {
 				state.identity = data;
 				forge.prefs.set('identity', JSON.stringify(state.identity)); 
 				salesforce.getOpportunities();
+				subscribe(); //Subscribe for push notification for this organization
 			},
 			error: function(data) {
 				forge.logging.log('Error getting identity');
@@ -70,6 +71,7 @@ var salesforce = {
 	},
 	
 	post: function(msg, file) {
+		//TODO: add file upload
 		forge.request.ajax({
 			url : state.identity.urls.feeds.replace("{version}", "25.0") + "/news/"+state.identity.user_id+"/feed-items",
 			type: "POST",

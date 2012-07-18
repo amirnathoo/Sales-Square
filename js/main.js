@@ -7,6 +7,14 @@ var state = {
 	mapButton: null
 }
 
+function subscribe() {
+	forge.partners.parse.push.subscribe('C'+state.identity.organization_id, function() {
+		forge.logging.log('Successfully subscribed for push notifications');
+	}, function(err) {
+		forge.logging.error("Couldn't subscribe for push notifications: "+JSON.stringify(err));
+	});
+}
+
 $.fx.off = true;
 forge.topbar.setTint([10,49,115,255]);
 forge.tabbar.setActiveTint([10,49,115,255]);
@@ -48,7 +56,8 @@ $('#checkin').live('tap', function() {
 $('ul li a').live('tap', function() {
 	var opp = $(this).html();
 	forge.file.getImage(function(file) {
-		salesforce.post(state.identity.display_name + " is at " + state.location + " working on " + opp, file);
+		var msg = state.identity.display_name + " is at " + state.location + " working on " + opp;
+		salesforce.post(msg, file);
 		map.addCheckin(opp, state.position.coords.latitude, state.position.coords.longitude, state.identity.display_name);
 		forge.logging.log('Creating push notification');
 		forge.request.ajax({
@@ -61,8 +70,10 @@ $('ul li a').live('tap', function() {
 			contentType: "application/json",
 			dataType: 'json',
 			data: JSON.stringify({
-				channel: "Broadcast",
+				channel: 'C'+state.identity.organization_id,
 				data: {
+					alert: msg,
+					badge: 1,
 					opp: opp,
 					lat: state.position.coords.latitude,
 					lng: state.position.coords.longitude,
@@ -130,20 +141,11 @@ $(document).bind('pagechange', function() {
 forge.event.messagePushed.addListener(function (msg) {
     forge.logging.log("Received push message:");
 	forge.logging.log(msg);
-	map.addCheckin(msg.opp, msg.lat, msg.lng, msg.name); 
-	map.getLocation({
-		longitude: msg.lng,
-		latitude: msg.lat
-	}, function(addr) {
-		forge.notification.create("Sales Square: new check in", msg.name+" is working on "+msg.opp+" at "+addr);
-	});
+	map.addCheckin(msg.opp, msg.lat, msg.lng, msg.name);
+	subscribe();
 });
 
-forge.partners.parse.push.subscribe('Broadcast', function() {
-	forge.logging.log('Successfully subscribed for push notifications');
-}, function(err) {
-	forge.logging.error("Couldn't subscribe for push notifications: "+JSON.stringify(err));
-});
+
 
 
 
