@@ -18,15 +18,15 @@ Getting the code
 1. Open a terminal and navigate to your app directory.
 2. Copy your identity.json file away and remove the template contents in the src directory:
 
-   cd src
-   mv identity.json ...
-   rm -rf *
+   * cd src
+   * mv identity.json ...
+   * rm -rf *
 
 3. Checkout this repository and copy the identity.json file back:
 
-   git clone https://github.com/amirnathoo/Sales-Square .
-   cd ..
-   mv identity.json src/
+   * git clone https://github.com/amirnathoo/Sales-Square .
+   * cd ..
+   * mv identity.json src/
 
 Running the app
 ---------------
