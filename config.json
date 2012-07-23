@@ -20,11 +20,13 @@
 		"tools": true, 
 		"topbar": true,
 		"notifications": true,
+		"reload": true,
 		"icons": {
 			"ios": {
 				"57": "img/57.png",
 				"72": "img/72.png",
-				"114": "img/114.png"
+				"114": "img/114.png",
+				"144": "img/114.png"
 			}
 		},
 		"package_names": {
@@ -38,6 +40,6 @@
 	    }
 	},
 	"name": "Sales Square", 
-	"platform_version": "v1.3", 
+	"platform_version": "v1.4.1", 
 	"version": "0.1"
 }
