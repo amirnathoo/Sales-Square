@@ -1,4 +1,4 @@
-Ho to build Sales Square
+How to build Sales Square
 ========================
 
 Sales Square is built using `Trigger.io <https://trigger.io>`_, here are the steps to build and test this app on a Mac in the iOS emulator.
