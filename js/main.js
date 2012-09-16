@@ -47,7 +47,7 @@ forge.tabbar.addButton({
 $('#checkin').live('tap', function() {
 	if (state.token) {
 		location.hash = "#three";
-		forge.topbar.setTitle('Confirm Location');
+		forge.topbar.setTitle('Confirm Loction');
 	} else {
 		salesforce.login();
 	}

@@ -3,13 +3,26 @@
 	"config_version": "2", 
 	"description": "Sales Square", 
 	"modules": {
+		"event": true, 
 		"file": true, 
 		"geolocation": true, 
+		"icons": {
+			"ios": {
+				"114": "img/114.png", 
+				"144": "img/114.png", 
+				"57": "img/57.png", 
+				"72": "img/72.png"
+			}
+		}, 
 		"is": true, 
 		"logging": {
 			"level": "DEBUG"
 		}, 
+		"package_names": {
+			"ios": "com.amirnathoo.salessquare"
+		}, 
 		"prefs": true, 
+		"reload": true, 
 		"request": {
 			"permissions": [
 				"http://*/*", 
@@ -17,29 +30,17 @@
 			]
 		}, 
 		"tabbar": true, 
+		"tabs": true, 
 		"tools": true, 
-		"topbar": true,
-		"notifications": true,
-		"reload": true,
-		"icons": {
-			"ios": {
-				"57": "img/57.png",
-				"72": "img/72.png",
-				"114": "img/114.png",
-				"144": "img/114.png"
-			}
-		},
-		"package_names": {
-			"ios": "com.amirnathoo.salessquare"
+		"topbar": true
+	}, 
+	"name": "Sales Square", 
+	"partners": {
+		"parse": {
+			"applicationId": "iMgpKcdRI0ZhgF6WFv0CAecOPVViY3AoZxoBO8Fu", 
+			"clientKey": "zvyV1b1EyljgqiwxOYj4CkhJ8L4cOmEvmYQYu7nD"
 		}
 	}, 
-	"partners": {
-	    "parse": {
-	        "applicationId": "iMgpKcdRI0ZhgF6WFv0CAecOPVViY3AoZxoBO8Fu",
-	        "clientKey": "zvyV1b1EyljgqiwxOYj4CkhJ8L4cOmEvmYQYu7nD"
-	    }
-	},
-	"name": "Sales Square", 
-	"platform_version": "v1.4.1", 
+	"platform_version": "v1.4", 
 	"version": "0.1"
 }
